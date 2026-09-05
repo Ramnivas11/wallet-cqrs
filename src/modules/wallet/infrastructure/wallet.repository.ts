@@ -1,4 +1,4 @@
-import { prisma } from "../../infrastructure/database/prisma";
+import { prisma } from "../../../infrastructure/database/prisma";
 
 export class WalletRepository {
   async createWallet(userId: string) {

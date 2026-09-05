@@ -1,5 +1,5 @@
 import express from "express";
-import walletRoutes from "./module/walle/wallet.routes"
+import walletRoutes from "./modules/wallet/api/wallet.routes";
 
 const app = express();
 

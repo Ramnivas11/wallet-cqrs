@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { EventStoreRepository } from "./repositories/event-store.repository";
-import { CreateWalletHandler } from "./commands/create-wallet/create-wallet.handler";
+import { EventStoreRepository } from "../infrastructure/event-store.repository";
+import { CreateWalletHandler } from "../commands/create-wallet/create-wallet.handler";
 
 const eventStore = new EventStoreRepository();
 const createWalletHandler = new CreateWalletHandler(eventStore);

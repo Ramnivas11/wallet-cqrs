@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { WalletAggregate } from "../../domain/wallet.aggregate";
-import { EventStoreRepository } from "../../repositories/event-store.repository";
+import { EventStoreRepository } from "../../infrastructure/event-store.repository";
 import { CreateWalletCommand } from "./create-wallet.command";
 
 export class CreateWalletHandler {

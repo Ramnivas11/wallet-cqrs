@@ -1,15 +1,4 @@
-export type WalletEvent =
-  | WalletCreatedEvent
-  | MoneyDepositedEvent
-  | MoneyWithdrawnEvent;
-
-export interface WalletCreatedEvent {
-  type: "WalletCreated";
-  data: {
-    walletId: string;
-    userId: string;
-  };
-}
+import { WalletCreatedEvent } from "./events/wallet-created.event";
 
 export interface MoneyDepositedEvent {
   type: "MoneyDeposited";
@@ -24,6 +13,11 @@ export interface MoneyWithdrawnEvent {
     amount: string;
   };
 }
+
+export type WalletEvent =
+  | WalletCreatedEvent
+  | MoneyDepositedEvent
+  | MoneyWithdrawnEvent;
 
 export class WalletAggregate {
   private balance = 0;
