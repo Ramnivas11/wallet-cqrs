@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { WalletRepository } from "./wallet.repository";
-import { WalletService } from "./wallet.service";
+import { EventStoreRepository } from "./repositories/event-store.repository";
+import { CreateWalletHandler } from "./commands/create-wallet/create-wallet.handler";
 
-const walletRepository = new WalletRepository();
-const walletService = new WalletService(walletRepository);
+const eventStore = new EventStoreRepository();
+const createWalletHandler = new CreateWalletHandler(eventStore);
 
 export class WalletController {
   async createWallet(req: Request, res: Response) {
@@ -16,35 +16,13 @@ export class WalletController {
         });
       }
 
-      const wallet = await walletService.createWallet(userId);
+      const result = await createWalletHandler.execute({
+        userId
+      });
 
       return res.status(201).json({
         message: "Wallet created successfully",
-        data: wallet
-      });
-    } catch (error) {
-      console.error(error);
-
-      return res.status(500).json({
-        message: "Internal server error"
-      });
-    }
-  }
-
-  async getWallet(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-
-      const wallet = await walletService.getWallet(id as string);
-
-      if (!wallet) {
-        return res.status(404).json({
-          message: "Wallet not found"
-        });
-      }
-
-      return res.status(200).json({
-        data: wallet
+        data: result
       });
     } catch (error) {
       console.error(error);

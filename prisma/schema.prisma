@@ -33,6 +33,19 @@ model User {
   wallet Wallet?
 }
 
+model EventStore {
+  id            String   @id @default(uuid())
+  aggregateId   String
+  aggregateType String
+  eventType     String
+  eventVersion  Int
+  eventData     Json
+  occurredAt    DateTime @default(now())
+
+  @@unique([aggregateId, eventVersion])
+  @@index([aggregateId])
+}
+
 model Wallet {
   id        String   @id @default(uuid())
   userId    String   @unique
