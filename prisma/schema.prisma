@@ -61,6 +61,14 @@ model Wallet {
   ledgerEntries    LedgerEntry[]
 }
 
+model WalletReadModel {
+  walletId   String   @id
+  userId     String
+  balance    Int      @default(0)
+  version    Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
 model Transaction {
   id            String            @id @default(uuid())
   type          TransactionType

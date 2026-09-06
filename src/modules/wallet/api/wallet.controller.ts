@@ -1,9 +1,21 @@
 import { Request, Response } from "express";
 import { EventStoreRepository } from "../infrastructure/event-store.repository";
 import { CreateWalletHandler } from "../commands/create-wallet/create-wallet.handler";
+import { WalletProjection } from "../projections/wallet.projection";
+import { WalletReadRepository } from "../projections/wallet-read.repository";
 
 const eventStore = new EventStoreRepository();
-const createWalletHandler = new CreateWalletHandler(eventStore);
+
+const walletReadRepository = new WalletReadRepository();
+
+const walletProjection = new WalletProjection(
+  walletReadRepository
+);
+
+const createWalletHandler = new CreateWalletHandler(
+  eventStore,
+  walletProjection
+);
 
 export class WalletController {
   async createWallet(req: Request, res: Response) {
