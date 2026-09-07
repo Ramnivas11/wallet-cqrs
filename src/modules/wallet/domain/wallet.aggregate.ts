@@ -43,6 +43,23 @@ export class WalletAggregate {
     this.uncommittedEvents.push(event);
   }
 
+  static rehydrate(
+  walletId: string,
+  userId: string,
+  events: WalletEvent[]
+) {
+  const wallet = new WalletAggregate(
+    walletId,
+    userId
+  );
+
+  for (const event of events) {
+    wallet.apply(event);
+  }
+
+  return wallet;
+}
+
   getBalance() {
     return this.balance;
   }
