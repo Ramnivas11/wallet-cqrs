@@ -3,14 +3,14 @@ import { WalletCreatedEvent } from "./events/wallet-created.event";
 export interface MoneyDepositedEvent {
   type: "MoneyDeposited";
   data: {
-    amount: string;
+    amountInPaise: number;
   };
 }
 
 export interface MoneyWithdrawnEvent {
   type: "MoneyWithdrawn";
   data: {
-    amount: string;
+  amountInPaise: number;
   };
 }
 
@@ -20,7 +20,7 @@ export type WalletEvent =
   | MoneyWithdrawnEvent;
 
 export class WalletAggregate {
-  private balance = 0;
+  private balanceInPaise = 0;
   private version = 0;
 
   private uncommittedEvents: WalletEvent[] = [];
@@ -60,8 +60,10 @@ export class WalletAggregate {
   return wallet;
 }
 
+  
+
   getBalance() {
-    return this.balance;
+    return this.balanceInPaise;
   }
 
   getVersion() {
@@ -72,21 +74,39 @@ export class WalletAggregate {
     return this.uncommittedEvents;
   }
 
-  private apply(event: WalletEvent) {
-    switch (event.type) {
-      case "WalletCreated":
-        this.version++;
-        break;
+  
+  deposit(amountInPaise: number) {
+  if (amountInPaise <= 0) {
+    throw new Error("Deposit amount must be greater than zero");
+  }
 
-      case "MoneyDeposited":
-        this.balance += Number(event.data.amount);
-        this.version++;
-        break;
-
-      case "MoneyWithdrawn":
-        this.balance -= Number(event.data.amount);
-        this.version++;
-        break;
+  const event: MoneyDepositedEvent = {
+    type: "MoneyDeposited",
+    data: {
+      amountInPaise
     }
+  };
+
+  this.apply(event);
+  this.uncommittedEvents.push(event);
+}
+
+  private apply(event: WalletEvent) {
+  switch (event.type) {
+    case "WalletCreated":
+      this.version++;
+      break;
+
+    case "MoneyDeposited":
+      this.balanceInPaise += event.data.amountInPaise;
+      this.version++;
+      break;
+
+    case "MoneyWithdrawn":
+      this.balanceInPaise -= event.data.amountInPaise;
+      this.version++;
+      break;
   }
 }
+}
+

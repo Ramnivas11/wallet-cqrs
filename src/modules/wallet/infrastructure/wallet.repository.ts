@@ -16,4 +16,20 @@ export class WalletRepository {
       }
     });
   }
+
+  async updateBalance(
+    walletId: string,
+    balanceInPaise: number,
+    version: number
+  ) {
+    return prisma.walletReadModel.update({
+      where: {
+        walletId
+      },
+      data: {
+        balance: balanceInPaise,
+        version
+      }
+    });
+  }
 }
