@@ -128,6 +128,4 @@ npm run build    # Compile TypeScript
 npm start        # Start compiled application
 ```
 
-## Status
 
-This project is currently a **CQRS/event-driven architecture foundation**. Wallet creation and event persistence are implemented, while additional wallet operations such as deposits, withdrawals, transfers, and queries can be added as the project evolves.
