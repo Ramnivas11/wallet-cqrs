@@ -1,17 +1,70 @@
 import { Router } from "express";
 import { WalletController } from "./wallet.controller";
+import {
+  validateCreateWallet,
+  validateWalletAmount,
+  validateWalletId
+} from "../../../infrastructure/middleware/validation.middleware";
 
 const router = Router();
 const walletController = new WalletController();
 
-router.post("/", (req, res) => walletController.createWallet(req, res));
-router.get("/:id", (req, res) => walletController.getWalletBalance(req, res));
-router.get("/:id/balance", (req, res) => walletController.getWalletBalance(req, res));
-router.get("/:id/transactions", (req, res) => walletController.getTransactionHistory(req, res));
-router.get("/:id/history", (req, res) => walletController.getTransactionHistory(req, res));
-router.post("/:id/deposit", (req, res) => walletController.depositMoney(req, res));
-router.post("/:id/withdraw", (req, res) => walletController.withdrawMoney(req, res));
-router.post("/deposit", (req, res) => walletController.depositMoney(req, res));
-router.post("/withdraw", (req, res) => walletController.withdrawMoney(req, res));
+router.post(
+  "/",
+  validateCreateWallet,
+  (req, res, next) => walletController.createWallet(req, res, next)
+);
+
+router.get(
+  "/:id",
+  validateWalletId,
+  (req, res, next) => walletController.getWalletBalance(req, res, next)
+);
+
+router.get(
+  "/:id/balance",
+  validateWalletId,
+  (req, res, next) => walletController.getWalletBalance(req, res, next)
+);
+
+router.get(
+  "/:id/transactions",
+  validateWalletId,
+  (req, res, next) => walletController.getTransactionHistory(req, res, next)
+);
+
+router.get(
+  "/:id/history",
+  validateWalletId,
+  (req, res, next) => walletController.getTransactionHistory(req, res, next)
+);
+
+router.post(
+  "/:id/deposit",
+  validateWalletId,
+  validateWalletAmount,
+  (req, res, next) => walletController.depositMoney(req, res, next)
+);
+
+router.post(
+  "/deposit",
+  validateWalletId,
+  validateWalletAmount,
+  (req, res, next) => walletController.depositMoney(req, res, next)
+);
+
+router.post(
+  "/:id/withdraw",
+  validateWalletId,
+  validateWalletAmount,
+  (req, res, next) => walletController.withdrawMoney(req, res, next)
+);
+
+router.post(
+  "/withdraw",
+  validateWalletId,
+  validateWalletAmount,
+  (req, res, next) => walletController.withdrawMoney(req, res, next)
+);
 
 export default router;
