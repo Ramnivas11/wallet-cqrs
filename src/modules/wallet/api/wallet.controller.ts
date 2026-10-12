@@ -4,7 +4,9 @@ import { CreateWalletHandler } from "../commands/create-wallet/create-wallet.han
 import { DepositMoneyHandler } from "../commands/deposit-money/deposit-money.handler";
 import { WithdrawMoneyHandler } from "../commands/withdraw-money/withdraw-money.handler";
 import { GetWalletBalanceHandler } from "../queries/get-wallet-balance/get-wallet-balance.handler";
+import { GetTransactionHistoryHandler } from "../queries/get-transaction-history/get-transaction-history.handler";
 import { WalletProjection } from "../projections/wallet.projection";
+import { TransactionHistoryProjection } from "../projections/transaction-history.projection";
 import { WalletReadRepository } from "../projections/wallet-read.repository";
 
 const eventStore = new EventStoreRepository();
@@ -13,6 +15,10 @@ const walletReadRepository = new WalletReadRepository();
 
 const walletProjection = new WalletProjection(
   walletReadRepository
+);
+
+const transactionHistoryProjection = new TransactionHistoryProjection(
+  eventStore
 );
 
 const createWalletHandler = new CreateWalletHandler(
@@ -31,6 +37,11 @@ const withdrawMoneyHandler = new WithdrawMoneyHandler(
 );
 
 const getWalletBalanceHandler = new GetWalletBalanceHandler(
+  walletReadRepository
+);
+
+const getTransactionHistoryHandler = new GetTransactionHistoryHandler(
+  transactionHistoryProjection,
   walletReadRepository
 );
 
@@ -163,6 +174,36 @@ export class WalletController {
 
       return res.status(200).json({
         message: "Wallet fetched successfully",
+        data: result
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      const statusCode =
+        error.message === "Wallet not found" ? 404 : 500;
+
+      return res.status(statusCode).json({
+        message: error.message || "Internal server error"
+      });
+    }
+  }
+
+  async getTransactionHistory(req: Request, res: Response) {
+    try {
+      const walletId = req.params.id as string;
+
+      if (!walletId) {
+        return res.status(400).json({
+          message: "walletId parameter is required"
+        });
+      }
+
+      const result = await getTransactionHistoryHandler.execute({
+        walletId
+      });
+
+      return res.status(200).json({
+        message: "Transaction history fetched successfully",
         data: result
       });
     } catch (error: any) {
