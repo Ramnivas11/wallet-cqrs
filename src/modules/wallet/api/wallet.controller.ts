@@ -3,6 +3,7 @@ import { EventStoreRepository } from "../infrastructure/event-store.repository";
 import { CreateWalletHandler } from "../commands/create-wallet/create-wallet.handler";
 import { DepositMoneyHandler } from "../commands/deposit-money/deposit-money.handler";
 import { WithdrawMoneyHandler } from "../commands/withdraw-money/withdraw-money.handler";
+import { GetWalletBalanceHandler } from "../queries/get-wallet-balance/get-wallet-balance.handler";
 import { WalletProjection } from "../projections/wallet.projection";
 import { WalletReadRepository } from "../projections/wallet-read.repository";
 
@@ -26,6 +27,10 @@ const depositMoneyHandler = new DepositMoneyHandler(
 
 const withdrawMoneyHandler = new WithdrawMoneyHandler(
   eventStore,
+  walletReadRepository
+);
+
+const getWalletBalanceHandler = new GetWalletBalanceHandler(
   walletReadRepository
 );
 
@@ -135,6 +140,36 @@ export class WalletController {
             error.message === "Withdraw amount must be greater than zero"
           ? 400
           : 500;
+
+      return res.status(statusCode).json({
+        message: error.message || "Internal server error"
+      });
+    }
+  }
+
+  async getWalletBalance(req: Request, res: Response) {
+    try {
+      const walletId = req.params.id as string;
+
+      if (!walletId) {
+        return res.status(400).json({
+          message: "walletId parameter is required"
+        });
+      }
+
+      const result = await getWalletBalanceHandler.execute({
+        walletId
+      });
+
+      return res.status(200).json({
+        message: "Wallet fetched successfully",
+        data: result
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      const statusCode =
+        error.message === "Wallet not found" ? 404 : 500;
 
       return res.status(statusCode).json({
         message: error.message || "Internal server error"

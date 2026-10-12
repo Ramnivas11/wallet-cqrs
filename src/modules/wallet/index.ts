@@ -6,5 +6,7 @@ export * from "./commands/deposit-money/deposit-money.command";
 export * from "./commands/deposit-money/deposit-money.handler";
 export * from "./commands/withdraw-money/withdraw-money.command";
 export * from "./commands/withdraw-money/withdraw-money.handler";
+export * from "./queries/get-wallet-balance/get-wallet-balance.query";
+export * from "./queries/get-wallet-balance/get-wallet-balance.handler";
 export * from "./infrastructure/event-store.repository";
 export * from "./infrastructure/wallet.repository";
