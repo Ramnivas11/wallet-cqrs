@@ -24,7 +24,7 @@ export function mapStoredEventToWalletEvent(
       return {
         type: "MoneyDeposited",
         data: {
-          amount: event.eventData.amount
+          amountInPaise: event.eventData.amountInPaise
         }
       };
 
@@ -32,7 +32,7 @@ export function mapStoredEventToWalletEvent(
       return {
         type: "MoneyWithdrawn",
         data: {
-          amount: event.eventData.amount
+          amountInPaise: event.eventData.amountInPaise
         }
       };
 

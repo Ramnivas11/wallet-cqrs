@@ -76,20 +76,40 @@ export class WalletAggregate {
 
   
   deposit(amountInPaise: number) {
-  if (amountInPaise <= 0) {
-    throw new Error("Deposit amount must be greater than zero");
+    if (amountInPaise <= 0) {
+      throw new Error("Deposit amount must be greater than zero");
+    }
+
+    const event: MoneyDepositedEvent = {
+      type: "MoneyDeposited",
+      data: {
+        amountInPaise
+      }
+    };
+
+    this.apply(event);
+    this.uncommittedEvents.push(event);
   }
 
-  const event: MoneyDepositedEvent = {
-    type: "MoneyDeposited",
-    data: {
-      amountInPaise
+  withdraw(amountInPaise: number) {
+    if (amountInPaise <= 0) {
+      throw new Error("Withdraw amount must be greater than zero");
     }
-  };
 
-  this.apply(event);
-  this.uncommittedEvents.push(event);
-}
+    if (this.balanceInPaise < amountInPaise) {
+      throw new Error("Insufficient balance");
+    }
+
+    const event: MoneyWithdrawnEvent = {
+      type: "MoneyWithdrawn",
+      data: {
+        amountInPaise
+      }
+    };
+
+    this.apply(event);
+    this.uncommittedEvents.push(event);
+  }
 
   private apply(event: WalletEvent) {
   switch (event.type) {
